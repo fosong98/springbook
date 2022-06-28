@@ -18,7 +18,6 @@ public class UserDaoTest {
         user.setPassword("married");
 
         //dao.add(user);
-
         System.out.println(user.getId() + " enroll success");
 
         User user2 = dao.get(user.getId());
@@ -26,5 +25,8 @@ public class UserDaoTest {
         System.out.println(user2.getPassword());
 
         System.out.println(user2.getId() + " search success");
+
+        if (dao.connectionMaker instanceof CountingConnectionMaker)
+            System.out.println(((CountingConnectionMaker)(dao.connectionMaker)).getCount());
     }
 }

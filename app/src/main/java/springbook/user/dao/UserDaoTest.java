@@ -6,9 +6,11 @@ import org.springframework.context.support.GenericApplicationContext;
 import springbook.user.domain.User;
 
 import java.sql.SQLException;
+import org.junit.Test;
 
 public class UserDaoTest {
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+    @Test
+    public void addAndGet() throws SQLException, ClassNotFoundException {
         GenericApplicationContext context =
                 new AnnotationConfigApplicationContext(DaoFactory.class);
         UserDao dao = context.getBean("userDao", UserDao.class);

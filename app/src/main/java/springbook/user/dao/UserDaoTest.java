@@ -1,8 +1,8 @@
 package springbook.user.dao;
 
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 import springbook.user.domain.User;
 
 import java.sql.SQLException;
@@ -15,20 +15,24 @@ public class UserDaoTest {
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException {
         GenericApplicationContext context =
-                new AnnotationConfigApplicationContext(DaoFactory.class);
-        UserDao dao = context.getBean("userDao", UserDao.class);
+                new GenericXmlApplicationContext("applicationContext.xml");
+        UserDao dao = context.getBean("setterUserDao", UserDao.class);
+
+        dao.deleteAll();
+        assertThat(dao.getCount(), is(0));
+
         User user = new User();
         user.setId("gyumee");
         user.setName("park");
         user.setPassword("springno1");
 
         dao.add(user);
+        assertThat(dao.getCount(), is(1));
 
         User user2 = dao.get(user.getId());
 
 
         assertThat(user2.getName(), is(user.getName()));
         assertThat(user2.getPassword(), is(user.getPassword()));
-
     }
 }

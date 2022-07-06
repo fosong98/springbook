@@ -26,7 +26,9 @@ public class UserDaoTest {
 
         User user2 = dao.get(user.getId());
 
+
         assertThat(user2.getName(), is(user.getName()));
         assertThat(user2.getPassword(), is(user.getPassword()));
+
     }
 }

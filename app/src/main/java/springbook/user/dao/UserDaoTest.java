@@ -7,6 +7,9 @@ import springbook.user.domain.User;
 
 import java.sql.SQLException;
 import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 public class UserDaoTest {
     @Test
@@ -15,22 +18,15 @@ public class UserDaoTest {
                 new AnnotationConfigApplicationContext(DaoFactory.class);
         UserDao dao = context.getBean("userDao", UserDao.class);
         User user = new User();
-        user.setId("Whiteship");
-        user.setName("baekison");
-        user.setPassword("married");
+        user.setId("gyumee");
+        user.setName("박성철");
+        user.setPassword("springno1");
 
-        //dao.add(user);
-
-        System.out.println(user.getId() + " enroll success");
+        dao.add(user);
 
         User user2 = dao.get(user.getId());
 
-        if (!user.getName().equals(user2.getName())) {
-            System.out.println("테스트 실패 (name)");
-        } else if (!user.getPassword().equals(user2.getPassword())) {
-            System.out.println("테스트 실패 (password)");
-        } else {
-            System.out.println("search success");
-        }
+        assertThat(user2.getName(), is(user.getName()));
+        assertThat(user2.getPassword(), is(user.getPassword()));
     }
 }

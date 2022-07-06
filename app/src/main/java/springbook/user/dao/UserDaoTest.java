@@ -23,19 +23,20 @@ public class UserDaoTest {
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
 
-        User user = new User();
-        user.setId("gyumee");
-        user.setName("park");
-        user.setPassword("springno1");
+        User user1 = new User("gyumee", "park", "springno1");
+        User user2 = new User("leegw", "Lee", "springno2");
 
-        dao.add(user);
-        assertThat(dao.getCount(), is(1));
+        dao.add(user1);
+        dao.add(user2);
+        assertEquals(dao.getCount(), 2);
 
-        User user2 = dao.get(user.getId());
+        User userget1 = dao.get(user1.getId());
+        assertEquals(userget1.getName(), user1.getName());
+        assertEquals(userget1.getPassword(), user1.getPassword());
 
-
-        assertThat(user2.getName(), is(user.getName()));
-        assertThat(user2.getPassword(), is(user.getPassword()));
+        User userget2 = dao.get(user2.getId());
+        assertEquals(userget2.getName(), user2.getName());
+        assertEquals(userget2.getPassword(), user2.getPassword());
     }
 
     @Test

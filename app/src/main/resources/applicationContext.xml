@@ -9,4 +9,8 @@
     <bean id="setterUserDao" class="springbook.user.dao.UserDao">
         <property name="connectionMaker" ref="dataSource" />
     </bean>
+
+    <bean id="userDao" class="springbook.user.dao.UserDao">
+        <property name="connectionMaker" ref="dataSource" />
+    </bean>
 </beans>

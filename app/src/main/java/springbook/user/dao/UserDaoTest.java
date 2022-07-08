@@ -23,7 +23,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/applicationContext.xml")
+@ContextConfiguration(locations="/test-applicationContext.xml")
 @DirtiesContext
 public class UserDaoTest {
 
@@ -39,10 +39,7 @@ public class UserDaoTest {
         user1 = new User("gyumee", "park", "springno1");
         user2 = new User("leegw700", "Lee", "springno2");
         user3 = new User("bumjin", "park2", "springno3");
-        DataSource dataSource = new SingleConnectionDataSource(
-                "jdbc:mariadb://localhost:43/testdb", UserDaoPrivateData.name, UserDaoPrivateData.password, true
-        );
-        userDao.setConnectionMaker(dataSource);
+
     }
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException {

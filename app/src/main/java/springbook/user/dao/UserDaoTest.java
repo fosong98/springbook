@@ -8,17 +8,23 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import springbook.user.domain.User;
 
 import java.sql.SQLException;
 import org.junit.Test;
+
+import javax.sql.DataSource;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/applicationContext.xml")
+@ContextConfiguration(locations="/test-applicationContext.xml")
+@DirtiesContext
 public class UserDaoTest {
 
     @Autowired
@@ -30,15 +36,15 @@ public class UserDaoTest {
     private User user3;
     @Before
     public void setUp() {
-
         user1 = new User("gyumee", "park", "springno1");
         user2 = new User("leegw700", "Lee", "springno2");
         user3 = new User("bumjin", "park2", "springno3");
+
     }
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException {
         userDao.deleteAll();
-        assertThat(userDao.getCount(), is(0));
+        assertEquals(userDao.getCount(), 0);
 
         userDao.add(user1);
         userDao.add(user2);

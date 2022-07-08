@@ -10,4 +10,11 @@
         <property name="password" value="1356" />
     </bean>
 
+    <bean id="test-dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="org.mariadb.jdbc.Driver" />
+        <property name="url" value="jdbc:mariadb://localhost:43/testdb" />
+        <property name="username" value="fosong98" />
+        <property name="password" value="1356" />
+    </bean>
+
 </beans>

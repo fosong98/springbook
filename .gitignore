@@ -5,4 +5,5 @@
 build
 
 # Ignore Private Datas
-**/UserDaoPrivateData.java
+userPrivateData.xml
+UserDaoPrivateData.java

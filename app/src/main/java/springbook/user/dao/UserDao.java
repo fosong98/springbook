@@ -4,6 +4,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import springbook.user.domain.User;
 
 import javax.sql.DataSource;
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 
 public class UserDao {
@@ -61,14 +62,8 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        try (
-                Connection c = dataSource.getConnection();
-                PreparedStatement ps = c.prepareStatement("delete from users");
-                ) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
-        }
+        StatementStrategy st = new DeleteAllStatement();
+        jdbcContextWithStatementStrategy(st);
     }
 
     public int getCount() throws SQLException {
@@ -80,6 +75,17 @@ public class UserDao {
             rs.next();
             int count = rs.getInt(1);
             return count;
+        }
+    }
+
+    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
+        try (
+                Connection c = dataSource.getConnection();
+                PreparedStatement ps = stmt.makePreparedStatement(c);
+        ) {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
         }
     }
 }

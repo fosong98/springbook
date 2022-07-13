@@ -10,6 +10,8 @@ import java.sql.*;
 public class UserDao {
     public DataSource dataSource;
 
+    private JdbcContext jdbcContext;
+
     public UserDao() {}
 
     public UserDao(DataSource dataSource) {
@@ -20,8 +22,10 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
+    public void setJdbcContext(JdbcContext jdbcContext) { this.jdbcContext = jdbcContext; }
+
     public void add(final User user) throws SQLException {
-        jdbcContextWithStatementStrategy(
+        jdbcContext.workWithStatementStrategy(
             new StatementStrategy() {
                 @Override
                 public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
@@ -64,7 +68,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
             @Override
             public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
                 PreparedStatement ps = c.prepareStatement("delete from users");
@@ -82,17 +86,6 @@ public class UserDao {
             rs.next();
             int count = rs.getInt(1);
             return count;
-        }
-    }
-
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException {
-        try (
-                Connection c = dataSource.getConnection();
-                PreparedStatement ps = stmt.makePreparedStatement(c);
-        ) {
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
         }
     }
 }

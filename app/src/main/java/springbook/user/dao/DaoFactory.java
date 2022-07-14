@@ -28,7 +28,7 @@ public class DaoFactory {
     @Bean
     public UserDao setterUserDao() {
         UserDao userDao = new UserDao();
-        userDao.setConnectionMaker(dataSource());
+        userDao.setDataSource(dataSource());
         return userDao;
     }
 

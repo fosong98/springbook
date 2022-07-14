@@ -12,6 +12,8 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework:spring-test:5.2.0.RELEASE'
+    implementation 'org.jetbrains:annotations:20.1.0'
+    implementation 'org.jetbrains:annotations:20.1.0'
 
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'

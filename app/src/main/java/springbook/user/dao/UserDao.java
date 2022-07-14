@@ -4,7 +4,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import springbook.user.domain.User;
 
 import javax.sql.DataSource;
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 
 public class UserDao {
@@ -18,11 +17,14 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
-    public void setConnectionMaker(DataSource dataSource) {
+    public void setDataSource(DataSource dataSource) {
+        this.jdbcContext = new JdbcContext();
+
+        this.jdbcContext.setDataSource(dataSource);
+
         this.dataSource = dataSource;
     }
 
-    public void setJdbcContext(JdbcContext jdbcContext) { this.jdbcContext = jdbcContext; }
 
     public void add(final User user) throws SQLException {
         jdbcContext.workWithStatementStrategy(

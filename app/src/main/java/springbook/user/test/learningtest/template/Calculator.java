@@ -6,8 +6,8 @@ import java.io.IOException;
 
 public class Calculator {
     public int calcSum(String filePath) throws IOException {
-        LineCallback sumCallback =
-                new LineCallback() {
+        LineCallback<Integer> sumCallback =
+                new LineCallback<Integer>() {
                     @Override
                     public Integer doSomethingWithLine(String line, Integer value) {
                         return Integer.valueOf(line) + value;
@@ -18,8 +18,8 @@ public class Calculator {
     }
 
     public int calcMultiply(String filePath) throws IOException {
-        LineCallback multiplyCallback =
-                new LineCallback() {
+        LineCallback<Integer> multiplyCallback =
+                new LineCallback<Integer>() {
                     @Override
                     public Integer doSomethingWithLine(String line, Integer value) {
                         return Integer.valueOf(line) * value;
@@ -27,6 +27,18 @@ public class Calculator {
                 };
 
         return lineReadTemplate(filePath, multiplyCallback, 1);
+    }
+
+    public String concatenate(String filepath) throws IOException {
+        LineCallback<String> concatenateCallback =
+                new LineCallback<String>() {
+                    @Override
+                    public String doSomethingWithLine(String line, String value) {
+                        return value + line;
+                    }
+                };
+
+        return lineReadTemplate(filepath, concatenateCallback, "");
     }
 
     public Integer fileReaderTemplate(String filePath, BufferedReaderCallback callback) throws IOException {
@@ -40,11 +52,11 @@ public class Calculator {
         }
     }
 
-    public Integer lineReadTemplate(String filePath, LineCallback callback, int initVal) throws IOException {
+    public <T> T lineReadTemplate(String filePath, LineCallback<T> callback, T initVal) throws IOException {
         try (
                 BufferedReader reader = new BufferedReader(new FileReader(filePath))
         ) {
-            Integer res = initVal;
+            T res = initVal;
             String line = null;
             while ((line = reader.readLine()) != null) {
                 res = callback.doSomethingWithLine(line, res);

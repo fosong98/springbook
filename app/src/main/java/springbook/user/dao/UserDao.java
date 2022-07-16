@@ -10,6 +10,7 @@ import springbook.user.domain.User;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.List;
 
 public class UserDao {
     public DataSource dataSource;
@@ -29,7 +30,7 @@ public class UserDao {
     }
 
 
-    public void add(final User user) throws SQLException {
+    public void add(final User user) {
         this.jdbcTemplate.update("insert into users(id, name, password) values(?, ?, ?)",
                 user.getId(), user.getName(), user.getPassword()
         );
@@ -38,7 +39,22 @@ public class UserDao {
     public User get(String id) throws SQLException {
         return this.jdbcTemplate.queryForObject(
                 "select * from users where id = ?",
-                new Object[]{id},
+                new RowMapper<User>() {
+                    @Override
+                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                        User user = new User();
+                        user.setId(rs.getString("id"));
+                        user.setName(rs.getString("name"));
+                        user.setPassword(rs.getString("password"));
+                        return user;
+                    }
+                }, id
+        );
+    }
+
+    public List<User> getAll() {
+        return this.jdbcTemplate.query(
+                "select * from users order by id",
                 new RowMapper<User>() {
                     @Override
                     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -52,7 +68,7 @@ public class UserDao {
         );
     }
 
-    public void deleteAll() throws SQLException {
+    public void deleteAll() {
         jdbcTemplate.update("delete from users");
     }
 

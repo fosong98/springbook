@@ -1,8 +1,10 @@
 package springbook.user.dao;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import springbook.user.domain.User;
 
 import javax.sql.DataSource;
@@ -63,14 +65,23 @@ public class UserDao {
     }
 
     public int getCount() throws SQLException {
-        try (
-                Connection c = dataSource.getConnection();
-                PreparedStatement ps = c.prepareStatement("select count(*) from users");
-                ResultSet rs = ps.executeQuery();
-        ) {
-            rs.next();
-            int count = rs.getInt(1);
-            return count;
-        }
+        // query 메소드를 이용하기 때문에 2개의 콜백을 작성
+//        return this.jdbcTemplate.query(
+//                new PreparedStatementCreator() {
+//                   @Override
+//                   public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+//                       return con.prepareStatement("select count(*) from users");
+//                   }
+//                },
+//                new ResultSetExtractor<Integer>() {
+//                    @Override
+//                    public Integer extractData(ResultSet rs) throws SQLException, DataAccessException {
+//                        rs.next();
+//                        return rs.getInt(1);
+//                    }
+//                });
+
+        // 하나의 정수 값을 위한 queryForObject 메소드를 사용
+        return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
     }
 }

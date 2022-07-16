@@ -13,20 +13,24 @@ import java.sql.*;
 import java.util.List;
 
 public class UserDao {
-    public DataSource dataSource;
-
+    private RowMapper<User> userMapper =
+            new RowMapper<User>() {
+                @Override
+                public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    User user = new User();
+                    user.setId(rs.getString("id"));
+                    user.setName(rs.getString("name"));
+                    user.setPassword(rs.getString("password"));
+                    return user;
+                }
+            };
     private JdbcTemplate jdbcTemplate;
 
     public UserDao() {}
 
-    public UserDao(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
-
-        this.dataSource = dataSource;
     }
 
 
@@ -39,32 +43,15 @@ public class UserDao {
     public User get(String id) throws SQLException {
         return this.jdbcTemplate.queryForObject(
                 "select * from users where id = ?",
-                new RowMapper<User>() {
-                    @Override
-                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        User user = new User();
-                        user.setId(rs.getString("id"));
-                        user.setName(rs.getString("name"));
-                        user.setPassword(rs.getString("password"));
-                        return user;
-                    }
-                }, id
+                this.userMapper,
+                id
         );
     }
 
     public List<User> getAll() {
         return this.jdbcTemplate.query(
                 "select * from users order by id",
-                new RowMapper<User>() {
-                    @Override
-                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        User user = new User();
-                        user.setId(rs.getString("id"));
-                        user.setName(rs.getString("name"));
-                        user.setPassword(rs.getString("password"));
-                        return user;
-                    }
-                }
+                this.userMapper
         );
     }
 

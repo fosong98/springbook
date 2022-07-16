@@ -15,6 +15,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import springbook.user.domain.User;
 
 import java.sql.SQLException;
+import java.util.List;
+
 import org.junit.Test;
 
 import javax.sql.DataSource;
@@ -81,5 +83,37 @@ public class UserDaoTest {
         assertEquals(userDao.getCount(), 0);
 
         userDao.get("unknown_id");
+    }
+
+    @Test
+    public void getAll() {
+        userDao.deleteAll();
+
+        List<User> user0 = userDao.getAll();
+        assertEquals(user0.size(), 0);
+
+        userDao.add(user1);
+        List<User> users1 = userDao.getAll();
+        assertEquals(users1.size(), 1);
+        checkSameUser(user1, users1.get(0));
+
+        userDao.add(user2);
+        List<User> users2 = userDao.getAll();
+        assertEquals(users2.size(), 2);
+        checkSameUser(user1, users2.get(0));
+        checkSameUser(user2, users2.get(1));
+
+        userDao.add(user3);
+        List<User> users3 = userDao.getAll();
+        assertEquals(users3.size(), 3);
+        checkSameUser(user3, users3.get(0));
+        checkSameUser(user1, users3.get(1));
+        checkSameUser(user2, users3.get(2));
+    }
+
+    private void checkSameUser(User user1, User user2) {
+        assertEquals(user1.getId(), user2.getId());
+        assertEquals(user1.getName(), user2.getName());
+        assertEquals(user1.getPassword(), user2.getPassword());
     }
 }

@@ -5,7 +5,7 @@
 
     <import resource="classpath:userPrivateData.xml" />
 
-    <bean id="userDao" class="springbook.user.dao.UserDao">
+    <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="test-dataSource" />
     </bean>
 </beans>

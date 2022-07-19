@@ -6,11 +6,11 @@
 
     <import resource="classpath:userPrivateData.xml" />
 
-    <bean id="setterUserDao" class="springbook.user.dao.UserDao">
+    <bean id="setterUserDao" class="springbook.user.dao.UserDaoJdbc">
         <property name="connectionMaker" ref="dataSource" />
     </bean>
 
-    <bean id="userDao" class="springbook.user.dao.UserDao">
+    <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
         <property name="connectionMaker" ref="dataSource" />
     </bean>
 </beans>

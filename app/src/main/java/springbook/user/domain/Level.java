@@ -27,4 +27,8 @@ public enum Level {
             default: throw new AssertionError("Unknown value: " + value);
         }
     }
+
+    public static int subtract(Level level1, Level level2) {
+        return level1.intValue() - level2.intValue();
+    }
 }

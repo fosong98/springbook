@@ -106,6 +106,23 @@ public class UserDaoTest {
         checkSameUser(user2, users3.get(2));
     }
 
+    @Test
+    public void update() {
+        userDao.deleteAll();
+
+        userDao.add(user1);
+
+        user1.setName("Ouh");
+        user1.setPassword("springno6");
+        user1.setLevel(Level.GOLD);
+        user1.setLogin(1000);
+        user1.setRecommend(999);
+        userDao.update(user1);
+
+        User user1update = userDao.get(user1.getId());
+        checkSameUser(user1, user1update);
+    }
+
     @Test(expected = DuplicateKeyException.class)
     public void duplicateKey() {
         userDao.deleteAll();

@@ -79,4 +79,13 @@ public class UserDaoJdbc implements UserDao {
         // 하나의 정수 값을 위한 queryForObject 메소드를 사용
         return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
     }
+
+    @Override
+    public void update(User user1) {
+        this.jdbcTemplate.update(
+                "update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?;",
+                user1.getName(), user1.getPassword(), user1.getLevel().intValue(), user1.getLogin(), user1.getRecommend(),
+                user1.getId()
+        );
+    }
 }

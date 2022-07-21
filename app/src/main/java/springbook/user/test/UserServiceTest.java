@@ -10,6 +10,9 @@ import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 import springbook.user.service.UserService;
+import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
+import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,12 +31,12 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         users = Arrays.asList(
-                new User("bujin", "bum", "p1", Level.BASIC, 49, 0),
-                new User("joytouch", "kkang", "p2", Level.BASIC, 50, 0),
-                new User("jjadoo", "song", "pick6", Level.BASIC, 50, 30),
-                new User("erwins", "shin", "p3", Level.SILVER, 60, 29),
-                new User("madnite1", "lee", "p4", Level.SILVER, 60, 30),
-                new User("green", "oh", "p5", Level.GOLD, 100, 100)
+                new User("bujin", "bum", "p1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER - 1, 0),
+                new User("joytouch", "kkang", "p2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 0),
+                new User("jjadoo", "song", "pick6", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, MIN_RECOMMEND_FOR_GOLD),
+                new User("erwins", "shin", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1),
+                new User("madnite1", "lee", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD),
+                new User("green", "oh", "p5", Level.GOLD, Integer.MAX_VALUE, Integer.MAX_VALUE)
         );
     }
     @Test
@@ -48,12 +51,12 @@ public class UserServiceTest {
 
         service.upgradeLevels();
 
-        checkLevel(users.get(0), Level.BASIC);
-        checkLevel(users.get(1), Level.SILVER);
-        checkLevel(users.get(2), Level.GOLD);
-        checkLevel(users.get(3), Level.SILVER);
-        checkLevel(users.get(4), Level.GOLD);
-        checkLevel(users.get(5), Level.GOLD);
+        checkLevelUpgraded(users.get(0), 0);
+        checkLevelUpgraded(users.get(1), 1);
+        checkLevelUpgraded(users.get(2), 2);
+        checkLevelUpgraded(users.get(3), 0);
+        checkLevelUpgraded(users.get(4), 1);
+        checkLevelUpgraded(users.get(5), 0);
     }
 
     @Test
@@ -74,8 +77,8 @@ public class UserServiceTest {
         assertEquals(userWithoutLevel.getLevel(), Level.BASIC);
     }
 
-    private void checkLevel(User user, Level expectedLevel) {
+    private void checkLevelUpgraded(User user, int difference) {
         User userUpdate = dao.get(user.getId());
-        assertEquals(userUpdate.getLevel(), expectedLevel);
+        assertEquals(Level.subtract(userUpdate.getLevel(), user.getLevel()), difference);
     }
 }

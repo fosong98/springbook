@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
 import java.sql.SQLException;
@@ -34,9 +35,9 @@ public class UserDaoTest {
     private User user3;
     @Before
     public void setUp() {
-        user1 = new User("gyumee", "park", "springno1");
-        user2 = new User("leegw700", "Lee", "springno2");
-        user3 = new User("bumjin", "park2", "springno3");
+        user1 = new User("gyumee", "park", "springno1", Level.BASIC, 1, 0);
+        user2 = new User("leegw700", "Lee", "springno2", Level.SILVER, 55, 10);
+        user3 = new User("bumjin", "park2", "springno3", Level.GOLD, 100, 40);
 
     }
     @Test
@@ -49,12 +50,10 @@ public class UserDaoTest {
         assertEquals(userDao.getCount(), 2);
 
         User userget1 = userDao.get(user1.getId());
-        assertEquals(userget1.getName(), user1.getName());
-        assertEquals(userget1.getPassword(), user1.getPassword());
+        checkSameUser(user1, userget1);
 
         User userget2 = userDao.get(user2.getId());
-        assertEquals(userget2.getName(), user2.getName());
-        assertEquals(userget2.getPassword(), user2.getPassword());
+        checkSameUser(user2, userget2);
     }
 
     @Test
@@ -119,5 +118,8 @@ public class UserDaoTest {
         assertEquals(user1.getId(), user2.getId());
         assertEquals(user1.getName(), user2.getName());
         assertEquals(user1.getPassword(), user2.getPassword());
+        assertEquals(user1.getLevel(), user2.getLevel());
+        assertEquals(user1.getLogin(), user2.getLogin());
+        assertEquals(user1.getRecommend(), user2.getRecommend());
     }
 }

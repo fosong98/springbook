@@ -22,6 +22,25 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserServiceTest {
+    static class TestUserService extends UserService {
+        private String id;
+
+        private TestUserService(String id) {
+            this.id = id;
+        }
+
+        @Override
+        protected void upgradeLevel(User user) {
+            if (user.getId().equals(this.id)) {
+                throw new TestUserServiceException();
+            }
+            super.upgradeLevel(user);
+        }
+    }
+
+    static class TestUserServiceException extends RuntimeException {
+    }
+
     @Autowired
     UserDao dao;
     @Autowired
@@ -75,6 +94,23 @@ public class UserServiceTest {
 
         assertEquals(userWithLevel.getLevel(), userWithLevelRead.getLevel());
         assertEquals(userWithoutLevel.getLevel(), Level.BASIC);
+    }
+
+    @Test
+    public void upgradeAllOrNothing() {
+        UserService testUserService = new TestUserService(users.get(4).getId());
+        testUserService.setUserDao(this.dao);
+
+        dao.deleteAll();
+        for (User user : users) dao.add(user);
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch (TestUserServiceException e) {
+        }
+
+        checkLevelUpgraded(users.get(1), 0);
     }
 
     private void checkLevelUpgraded(User user, int difference) {

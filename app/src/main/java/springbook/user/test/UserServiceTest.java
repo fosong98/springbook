@@ -31,12 +31,14 @@ public class UserServiceTest {
 
         @Override
         protected void upgradeLevel(User user) {
-            if (user.getId().equals(this.id)) throw new TestUserServiceException();
+            if (user.getId().equals(this.id)) {
+                throw new TestUserServiceException();
+            }
             super.upgradeLevel(user);
         }
+    }
 
-        static class TestUserServiceException extends RuntimeException {
-        }
+    static class TestUserServiceException extends RuntimeException {
     }
 
     @Autowired
@@ -92,6 +94,23 @@ public class UserServiceTest {
 
         assertEquals(userWithLevel.getLevel(), userWithLevelRead.getLevel());
         assertEquals(userWithoutLevel.getLevel(), Level.BASIC);
+    }
+
+    @Test
+    public void upgradeAllOrNothing() {
+        UserService testUserService = new TestUserService(users.get(4).getId());
+        testUserService.setUserDao(this.dao);
+
+        dao.deleteAll();
+        for (User user : users) dao.add(user);
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch (TestUserServiceException e) {
+        }
+
+        checkLevelUpgraded(users.get(1), 0);
     }
 
     private void checkLevelUpgraded(User user, int difference) {

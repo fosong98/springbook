@@ -10,6 +10,7 @@ import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 import springbook.user.service.UserService;
+import javax.sql.DataSource;
 import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
 
@@ -22,7 +23,15 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserServiceTest {
-    static class TestUserService extends UserService {
+    @Autowired
+    UserDao dao;
+    @Autowired
+    UserService service;
+    @Autowired
+    DataSource testDataSource;
+    List<User> users;
+
+    class TestUserService extends UserService {
         private String id;
 
         private TestUserService(String id) {
@@ -41,12 +50,6 @@ public class UserServiceTest {
     static class TestUserServiceException extends RuntimeException {
     }
 
-    @Autowired
-    UserDao dao;
-    @Autowired
-    UserService service;
-    List<User> users;
-
     @Before
     public void setUp() {
         users = Arrays.asList(
@@ -64,7 +67,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws Exception {
         dao.deleteAll();
         for (User user: users) dao.add(user);
 
@@ -97,9 +100,10 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeAllOrNothing() {
+    public void upgradeAllOrNothing() throws Exception {
         UserService testUserService = new TestUserService(users.get(4).getId());
         testUserService.setUserDao(this.dao);
+        testUserService.setDataSource(this.testDataSource);
 
         dao.deleteAll();
         for (User user : users) dao.add(user);

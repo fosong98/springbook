@@ -5,11 +5,12 @@
 
     <import resource="classpath:userPrivateData.xml" />
 
-    <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
-        <property name="dataSource" ref="test-dataSource" />
-    </bean>
-
     <bean id="userService" class="springbook.user.service.UserService">
         <property name="userDao" ref="userDao" />
+        <property name="dataSource" ref="testDataSource" />
+    </bean>
+
+    <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
+        <property name="dataSource" ref="testDataSource" />
     </bean>
 </beans>

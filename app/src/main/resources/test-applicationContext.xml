@@ -5,9 +5,13 @@
 
     <import resource="classpath:userPrivateData.xml" />
 
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="testDataSource" />
+    </bean>
+
     <bean id="userService" class="springbook.user.service.UserService">
         <property name="userDao" ref="userDao" />
-        <property name="dataSource" ref="testDataSource" />
+        <property name="transactionManager" ref="transactionManager" />
     </bean>
 
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">

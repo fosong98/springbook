@@ -18,8 +18,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations="/test-applicationContext.xml")
@@ -35,9 +33,9 @@ public class UserDaoTest {
     private User user3;
     @Before
     public void setUp() {
-        user1 = new User("gyumee", "park", "springno1", Level.BASIC, 1, 0);
-        user2 = new User("leegw700", "Lee", "springno2", Level.SILVER, 55, 10);
-        user3 = new User("bumjin", "park2", "springno3", Level.GOLD, 100, 40);
+        user1 = new User("gyumee", "park", "springno1", Level.BASIC, 1, 0, "gyumee@pusan.ac.kr");
+        user2 = new User("leegw700", "Lee", "springno2", Level.SILVER, 55, 10, "leegw700@test.com");
+        user3 = new User("bumjin", "park2", "springno3", Level.GOLD, 100, 40, "bumjin@gmail.com");
 
     }
     @Test
@@ -118,6 +116,7 @@ public class UserDaoTest {
         user1.setLevel(Level.GOLD);
         user1.setLogin(1000);
         user1.setRecommend(999);
+        user1.setEmail("Ouh@gmail.com");
         userDao.update(user1);
 
         User user1update = userDao.get(user1.getId());
@@ -141,5 +140,6 @@ public class UserDaoTest {
         assertEquals(user1.getLevel(), user2.getLevel());
         assertEquals(user1.getLogin(), user2.getLogin());
         assertEquals(user1.getRecommend(), user2.getRecommend());
+        assertEquals(user1.getEmail(), user2.getEmail());
     }
 }

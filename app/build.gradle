@@ -14,6 +14,7 @@ dependencies {
     implementation 'org.springframework:spring-test:5.2.0.RELEASE'
     implementation 'org.jetbrains:annotations:20.1.0'
     implementation 'org.jetbrains:annotations:20.1.0'
+    implementation "com.sun.mail:javax.mail:1.6.2"
 
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'

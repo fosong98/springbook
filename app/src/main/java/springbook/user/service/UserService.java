@@ -32,6 +32,7 @@ public class UserService {
     public static final int MIN_RECOMMEND_FOR_GOLD = 30;
     private UserDao userDao;
     private PlatformTransactionManager transactionManager;
+    private MailSender mailSender;
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
@@ -39,6 +40,10 @@ public class UserService {
 
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
     }
 
     public void upgradeLevels() throws Exception {
@@ -81,9 +86,6 @@ public class UserService {
     }
 
     private void sendUpgradeEMail(User user) {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("mail.server.com");
-
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
         mailMessage.setFrom("useradmin@ksug.org");

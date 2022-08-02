@@ -9,9 +9,12 @@
         <property name="dataSource" ref="testDataSource" />
     </bean>
 
+    <bean id="mailSender" class="springbook.user.service.DummyMailSender" />
+
     <bean id="userService" class="springbook.user.service.UserService">
         <property name="userDao" ref="userDao" />
         <property name="transactionManager" ref="transactionManager" />
+        <property name="mailSender" ref="mailSender" />
     </bean>
 
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">

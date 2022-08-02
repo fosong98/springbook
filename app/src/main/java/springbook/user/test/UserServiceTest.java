@@ -5,12 +5,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
+import springbook.user.service.MockMailSender;
 import springbook.user.service.UserService;
 import javax.sql.DataSource;
 import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
@@ -59,12 +61,12 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         users = Arrays.asList(
-                new User("bujin", "bum", "p1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER - 1, 0, "a"),
-                new User("joytouch", "kkang", "p2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 0, "b"),
-                new User("jjadoo", "song", "pick6", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, MIN_RECOMMEND_FOR_GOLD, "c"),
-                new User("erwins", "shin", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1, "d"),
-                new User("madnite1", "lee", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD, "e"),
-                new User("green", "oh", "p5", Level.GOLD, Integer.MAX_VALUE, Integer.MAX_VALUE, "f")
+                new User("abujin", "bum", "p1", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER - 1, 0, "a"),
+                new User("bjoytouch", "kkang", "p2", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, 0, "b"),
+                new User("cjjadoo", "song", "pick6", Level.BASIC, MIN_LOGCOUNT_FOR_SILVER, MIN_RECOMMEND_FOR_GOLD, "c"),
+                new User("derwins", "shin", "p3", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD - 1, "d"),
+                new User("emadnite1", "lee", "p4", Level.SILVER, 60, MIN_RECOMMEND_FOR_GOLD, "e"),
+                new User("fgreen", "oh", "p5", Level.GOLD, Integer.MAX_VALUE, Integer.MAX_VALUE, "f")
         );
     }
     @Test
@@ -73,9 +75,13 @@ public class UserServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void upgradeLevels() throws Exception {
         dao.deleteAll();
         for (User user: users) dao.add(user);
+
+        MockMailSender mockMailSender = new MockMailSender();
+        service.setMailSender(mockMailSender);
 
         service.upgradeLevels();
 
@@ -85,6 +91,14 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(3), 0);
         checkLevelUpgraded(users.get(4), 1);
         checkLevelUpgraded(users.get(5), 0);
+
+        List<String> request = mockMailSender.getRequests();
+        System.out.println(request);
+        assertEquals(4, request.size());
+        assertEquals(users.get(1).getEmail(), request.get(0));
+        assertEquals(users.get(2).getEmail(), request.get(1));
+        assertEquals(users.get(2).getEmail(), request.get(2));
+        assertEquals(users.get(4).getEmail(), request.get(3));
     }
 
     @Test

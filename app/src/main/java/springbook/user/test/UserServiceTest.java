@@ -14,9 +14,10 @@ import springbook.user.domain.Level;
 import springbook.user.domain.User;
 import springbook.user.service.MockMailSender;
 import springbook.user.service.UserService;
+import springbook.user.service.UserServiceImpl;
 import javax.sql.DataSource;
-import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static springbook.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
+import static springbook.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 
 
 import java.util.Arrays;
@@ -30,7 +31,7 @@ public class UserServiceTest {
     @Autowired
     UserDao dao;
     @Autowired
-    UserService service;
+    UserServiceImpl service;
     @Autowired
     DataSource testDataSource;
     @Autowired
@@ -39,7 +40,7 @@ public class UserServiceTest {
     MailSender mailSender;
     List<User> users;
 
-    class TestUserService extends UserService {
+    class TestUserService extends UserServiceImpl {
         private String id;
 
         private TestUserService(String id) {
@@ -121,9 +122,8 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothing() throws Exception {
-        UserService testUserService = new TestUserService(users.get(4).getId());
+        UserServiceImpl testUserService = new TestUserService(users.get(4).getId());
         testUserService.setUserDao(this.dao);
-        testUserService.setTransactionManager(transactionManager);
         testUserService.setMailSender(mailSender);
 
         dao.deleteAll();

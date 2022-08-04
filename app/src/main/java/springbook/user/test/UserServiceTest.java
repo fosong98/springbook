@@ -15,6 +15,8 @@ import springbook.user.domain.User;
 import springbook.user.service.MockMailSender;
 import springbook.user.service.UserService;
 import springbook.user.service.UserServiceImpl;
+import springbook.user.service.UserServiceTx;
+
 import javax.sql.DataSource;
 import static springbook.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
@@ -31,7 +33,9 @@ public class UserServiceTest {
     @Autowired
     UserDao dao;
     @Autowired
-    UserServiceImpl service;
+    UserService userService;
+    @Autowired
+    UserServiceImpl userServiceImpl;
     @Autowired
     DataSource testDataSource;
     @Autowired
@@ -72,7 +76,7 @@ public class UserServiceTest {
     }
     @Test
     public void bean() {
-        assertNotNull(this.service);
+        assertNotNull(this.userService);
     }
 
     @Test
@@ -82,9 +86,9 @@ public class UserServiceTest {
         for (User user: users) dao.add(user);
 
         MockMailSender mockMailSender = new MockMailSender();
-        service.setMailSender(mockMailSender);
+        userServiceImpl.setMailSender(mockMailSender);
 
-        service.upgradeLevels();
+        userServiceImpl.upgradeLevels();
 
         checkLevelUpgraded(users.get(0), 0);
         checkLevelUpgraded(users.get(1), 1);
@@ -110,8 +114,8 @@ public class UserServiceTest {
         User userWithoutLevel = users.get(0);
         userWithoutLevel.setLevel(null);
 
-        service.add(userWithLevel);
-        service.add(userWithoutLevel);
+        userService.add(userWithLevel);
+        userService.add(userWithoutLevel);
 
         User userWithLevelRead = dao.get(userWithLevel.getId());
         User userWithoutLevelRead = dao.get(userWithoutLevel.getId());
@@ -122,15 +126,19 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothing() throws Exception {
-        UserServiceImpl testUserService = new TestUserService(users.get(4).getId());
+        TestUserService testUserService = new TestUserService(users.get(4).getId());
         testUserService.setUserDao(this.dao);
         testUserService.setMailSender(mailSender);
+
+        UserServiceTx txUserService = new UserServiceTx();
+        txUserService.setTransactionManager(this.transactionManager);
+        txUserService.setUserService(testUserService);
 
         dao.deleteAll();
         for (User user : users) dao.add(user);
 
         try {
-            testUserService.upgradeLevels();
+            txUserService.upgradeLevels();
             fail("TestUserServiceException expected");
         } catch (TestUserServiceException e) {
         }

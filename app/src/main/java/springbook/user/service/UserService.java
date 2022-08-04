@@ -49,14 +49,8 @@ public class UserService {
     public void upgradeLevels() throws Exception {
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
-
         try {
-            List<User> users = userDao.getAll();
-            for (User user : users) {
-                while (canUpgradeLevel(user)) {
-                    upgradeLevel(user);
-                }
-            }
+            upgradeLevelInternal();
             transactionManager.commit(status);
         } catch (Exception e) {
             transactionManager.rollback(status);
@@ -67,6 +61,15 @@ public class UserService {
     public void add(User user) {
         if (user.getLevel() == null) user.setLevel(Level.BASIC);
         userDao.add(user);
+    }
+
+    private void upgradeLevelInternal() {
+        List<User> users = userDao.getAll();
+        for (User user : users) {
+            while (canUpgradeLevel(user)) {
+                upgradeLevel(user);
+            }
+        }
     }
 
     private boolean canUpgradeLevel(User user) {

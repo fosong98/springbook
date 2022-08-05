@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import springbook.user.dao.MockUserDao;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
@@ -80,22 +81,25 @@ public class UserServiceTest {
     }
 
     @Test
-    @DirtiesContext
     public void upgradeLevels() throws Exception {
-        dao.deleteAll();
-        for (User user: users) dao.add(user);
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+
+        MockUserDao mockUserDao = new MockUserDao(this.users);
+        userServiceImpl.setUserDao(mockUserDao);
 
         MockMailSender mockMailSender = new MockMailSender();
         userServiceImpl.setMailSender(mockMailSender);
 
         userServiceImpl.upgradeLevels();
 
-        checkLevelUpgraded(users.get(0), 0);
-        checkLevelUpgraded(users.get(1), 1);
-        checkLevelUpgraded(users.get(2), 2);
-        checkLevelUpgraded(users.get(3), 0);
-        checkLevelUpgraded(users.get(4), 1);
-        checkLevelUpgraded(users.get(5), 0);
+        List<User> updated = mockUserDao.getUpdated();
+        assertEquals(updated.size(), 4);
+
+        checkUserAndLevel(updated.get(0), "bjoytouch", Level.SILVER);
+        checkUserAndLevel(updated.get(2), "cjjadoo", Level.GOLD);
+        checkUserAndLevel(updated.get(3), "emadnite1", Level.GOLD);
+
+
 
         List<String> request = mockMailSender.getRequests();
         System.out.println(request);
@@ -149,5 +153,10 @@ public class UserServiceTest {
     private void checkLevelUpgraded(User user, int difference) {
         User userUpdate = dao.get(user.getId());
         assertEquals(Level.subtract(userUpdate.getLevel(), user.getLevel()), difference);
+    }
+
+    private void checkUserAndLevel(User updated, String expectedId, Level expectedLevel) {
+        assertEquals(expectedId, updated.getId());
+        assertEquals(expectedLevel, updated.getLevel());
     }
 }

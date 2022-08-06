@@ -3,8 +3,10 @@ package springbook.user.test;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,6 +24,7 @@ import javax.sql.DataSource;
 import static springbook.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
 import static springbook.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 
+import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,6 +81,35 @@ public class UserServiceTest {
     @Test
     public void bean() {
         assertNotNull(this.userService);
+    }
+
+    @Test
+    public void mockUpgradeLevels() throws Exception {
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+
+        UserDao mockUserDao = mock(UserDao.class);
+        when(mockUserDao.getAll()).thenReturn(this.users);
+        userServiceImpl.setUserDao(mockUserDao);
+
+        MailSender mockMailSender = mock(MailSender.class);
+        userServiceImpl.setMailSender(mockMailSender);
+
+        userServiceImpl.upgradeLevels();
+        verify(mockUserDao, times(4)).update(any(User.class));
+        verify(mockUserDao).update(users.get(1));
+        assertEquals(users.get(1).getLevel(), Level.SILVER);
+        verify(mockUserDao, times(2)).update(users.get(2));
+        assertEquals(users.get(2).getLevel(), Level.GOLD);
+        verify(mockUserDao).update(users.get(4));
+        assertEquals(users.get(4).getLevel(), Level.GOLD);
+
+        ArgumentCaptor<SimpleMailMessage> mailMessageArg = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mockMailSender, times(4)).send(mailMessageArg.capture());
+        List<SimpleMailMessage> mailMessages = mailMessageArg.getAllValues();
+        assertEquals(users.get(1).getEmail(), mailMessages.get(0).getTo()[0]);
+        assertEquals(users.get(2).getEmail(), mailMessages.get(1).getTo()[0]);
+        assertEquals(users.get(2).getEmail(), mailMessages.get(2).getTo()[0]);
+        assertEquals(users.get(4).getEmail(), mailMessages.get(3).getTo()[0]);
     }
 
     @Test

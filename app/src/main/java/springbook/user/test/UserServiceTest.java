@@ -41,7 +41,7 @@ public class UserServiceTest {
     @Autowired
     UserService userService;
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService testUserService;
     @Autowired
     DataSource testDataSource;
     @Autowired
@@ -50,12 +50,8 @@ public class UserServiceTest {
     MailSender mailSender;
     List<User> users;
 
-    class TestUserService extends UserServiceImpl {
-        private String id;
-
-        private TestUserService(String id) {
-            this.id = id;
-        }
+    static class TestUserServiceImpl extends UserServiceImpl {
+        private String id = "emadnite1";
 
         @Override
         protected void upgradeLevel(User user) {
@@ -145,7 +141,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void add() {
+    public void hadd() {
         dao.deleteAll();
 
         User userWithLevel = users.get(4);
@@ -165,20 +161,11 @@ public class UserServiceTest {
     @Test
     @DirtiesContext
     public void upgradeAllOrNothing() throws Exception {
-        TestUserService testUserService = new TestUserService(users.get(4).getId());
-        testUserService.setUserDao(this.dao);
-        testUserService.setMailSender(mailSender);
-
-        ProxyFactoryBean txProxyFactoryBean =
-                context.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
-        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
-
         dao.deleteAll();
-        for (User user : users) dao.add(user);
+        for (User user: users) dao.add(user);
 
         try {
-            txUserService.upgradeLevels();
+            testUserService.upgradeLevels();
             fail("TestUserServiceException expected");
         } catch (TestUserServiceException e) {
         }

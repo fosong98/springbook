@@ -16,6 +16,9 @@
         <property name="mailSender" ref="mailSender" />
     </bean>
 
+    <bean id="testUserService" class="springbook.user.test.UserServiceTest$TestUserServiceImpl"
+          parent="userService" />
+
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="testDataSource" />
     </bean>
@@ -26,7 +29,7 @@
 
     <bean id="transactionPointcut"
           class="springbook.user.service.NameMatchClassMethodPointcut">
-        <property name="classFilter" value="*ServiceImpl" />
+        <property name="mappedClassName" value="*ServiceImpl" />
         <property name="mappedName" value="upgrade*" />
     </bean>
 

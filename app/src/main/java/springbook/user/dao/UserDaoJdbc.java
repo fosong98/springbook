@@ -10,6 +10,37 @@ import java.sql.*;
 import java.util.List;
 
 public class UserDaoJdbc implements UserDao {
+    private String sqlAdd;
+    private String sqlGet;
+    private String sqlGetAll;
+    private String sqlDeleteAll;
+    private String sqlGetCount;
+    private String sqlUpdate;
+
+    public void setSqlAdd(String sqlAdd) {
+        this.sqlAdd = sqlAdd;
+    }
+
+    public void setSqlGet(String sqlGet) {
+        this.sqlGet = sqlGet;
+    }
+
+    public void setSqlGetAll(String sqlGetAll) {
+        this.sqlGetAll = sqlGetAll;
+    }
+
+    public void setSqlDeleteAll(String sqlDeleteAll) {
+        this.sqlDeleteAll = sqlDeleteAll;
+    }
+
+    public void setSqlGetCount(String sqlGetCount) {
+        this.sqlGetCount = sqlGetCount;
+    }
+
+    public void setSqlUpdate(String sqlUpdate) {
+        this.sqlUpdate = sqlUpdate;
+    }
+
     private RowMapper<User> userMapper =
             new RowMapper<User>() {
                 @Override
@@ -36,14 +67,14 @@ public class UserDaoJdbc implements UserDao {
 
 
     public void add(final User user) {
-        this.jdbcTemplate.update("insert into users(id, name, password, level, login, recommend, email) values(?, ?, ?, ?, ?, ?, ?)",
+        this.jdbcTemplate.update(this.sqlAdd,
                 user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail()
         );
     }
 
     public User get(String id) {
         return this.jdbcTemplate.queryForObject(
-                "select * from users where id = ?",
+                this.sqlGet,
                 this.userMapper,
                 id
         );
@@ -51,13 +82,13 @@ public class UserDaoJdbc implements UserDao {
 
     public List<User> getAll() {
         return this.jdbcTemplate.query(
-                "select * from users order by id",
+                this.sqlGetAll,
                 this.userMapper
         );
     }
 
     public void deleteAll() {
-        jdbcTemplate.update("delete from users");
+        jdbcTemplate.update(this.sqlDeleteAll);
     }
 
     public int getCount() {
@@ -78,13 +109,13 @@ public class UserDaoJdbc implements UserDao {
 //                });
 
         // 하나의 정수 값을 위한 queryForObject 메소드를 사용
-        return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+        return this.jdbcTemplate.queryForObject(this.sqlGetCount, Integer.class);
     }
 
     @Override
     public void update(User user1) {
         this.jdbcTemplate.update(
-                "update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? where id = ?;",
+                this.sqlUpdate,
                 user1.getName(), user1.getPassword(), user1.getLevel().intValue(), user1.getLogin(), user1.getRecommend(), user1.getEmail(),
                 user1.getId()
         );

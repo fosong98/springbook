@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteALl() {
+    public void deleteAll() {
         userDao.deleteAll();
     }
 

@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
@@ -59,6 +60,14 @@ public class UserServiceTest {
                 throw new TestUserServiceException();
             }
             super.upgradeLevel(user);
+        }
+
+        @Override
+        public List<User> getAll() {
+            for (User user: super.getAll()) {
+                super.update(user);
+            }
+            return null;
         }
     }
 
@@ -140,8 +149,17 @@ public class UserServiceTest {
         assertEquals(users.get(4).getEmail(), request.get(3));
     }
 
+    @Test(expected = TransientDataAccessResourceException.class)
+    public void readOnlyTransactionAttribute() {
+        testUserService.deleteAll();
+        for (User user : users) {
+            testUserService.add(user);
+        }
+        testUserService.getAll();
+    }
+
     @Test
-    public void hadd() {
+    public void add() {
         dao.deleteAll();
 
         User userWithLevel = users.get(4);

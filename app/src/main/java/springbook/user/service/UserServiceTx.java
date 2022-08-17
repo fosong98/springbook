@@ -35,7 +35,7 @@ public class UserServiceTx implements UserService{
         }
 
         @Override
-        public void deleteALl() {
+        public void deleteAll() {
 
         }
 

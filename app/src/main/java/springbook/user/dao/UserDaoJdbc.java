@@ -8,8 +8,15 @@ import springbook.user.domain.User;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
 
 public class UserDaoJdbc implements UserDao {
+    private Map<String, String> sqlMap;
+
+    public void setSqlMap(Map<String, String> sqlMap) {
+        this.sqlMap = sqlMap;
+    }
+
     private RowMapper<User> userMapper =
             new RowMapper<User>() {
                 @Override
@@ -36,14 +43,14 @@ public class UserDaoJdbc implements UserDao {
 
 
     public void add(final User user) {
-        this.jdbcTemplate.update("insert into users(id, name, password, level, login, recommend, email) values(?, ?, ?, ?, ?, ?, ?)",
+        this.jdbcTemplate.update(sqlMap.get("add"),
                 user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail()
         );
     }
 
     public User get(String id) {
         return this.jdbcTemplate.queryForObject(
-                "select * from users where id = ?",
+                sqlMap.get("get"),
                 this.userMapper,
                 id
         );
@@ -51,13 +58,13 @@ public class UserDaoJdbc implements UserDao {
 
     public List<User> getAll() {
         return this.jdbcTemplate.query(
-                "select * from users order by id",
+                sqlMap.get("getAll"),
                 this.userMapper
         );
     }
 
     public void deleteAll() {
-        jdbcTemplate.update("delete from users");
+        jdbcTemplate.update(sqlMap.get("deleteAll"));
     }
 
     public int getCount() {
@@ -78,13 +85,13 @@ public class UserDaoJdbc implements UserDao {
 //                });
 
         // 하나의 정수 값을 위한 queryForObject 메소드를 사용
-        return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+        return this.jdbcTemplate.queryForObject(sqlMap.get("getCount"), Integer.class);
     }
 
     @Override
     public void update(User user1) {
         this.jdbcTemplate.update(
-                "update users set name = ?, password = ?, level = ?, login = ?, recommend = ?, email = ? where id = ?;",
+                sqlMap.get("update"),
                 user1.getName(), user1.getPassword(), user1.getLevel().intValue(), user1.getLogin(), user1.getRecommend(), user1.getEmail(),
                 user1.getId()
         );

@@ -8,37 +8,13 @@ import springbook.user.domain.User;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
+import java.util.Map;
 
 public class UserDaoJdbc implements UserDao {
-    private String sqlAdd;
-    private String sqlGet;
-    private String sqlGetAll;
-    private String sqlDeleteAll;
-    private String sqlGetCount;
-    private String sqlUpdate;
+    private Map<String, String> sqlMap;
 
-    public void setSqlAdd(String sqlAdd) {
-        this.sqlAdd = sqlAdd;
-    }
-
-    public void setSqlGet(String sqlGet) {
-        this.sqlGet = sqlGet;
-    }
-
-    public void setSqlGetAll(String sqlGetAll) {
-        this.sqlGetAll = sqlGetAll;
-    }
-
-    public void setSqlDeleteAll(String sqlDeleteAll) {
-        this.sqlDeleteAll = sqlDeleteAll;
-    }
-
-    public void setSqlGetCount(String sqlGetCount) {
-        this.sqlGetCount = sqlGetCount;
-    }
-
-    public void setSqlUpdate(String sqlUpdate) {
-        this.sqlUpdate = sqlUpdate;
+    public void setSqlMap(Map<String, String> sqlMap) {
+        this.sqlMap = sqlMap;
     }
 
     private RowMapper<User> userMapper =
@@ -67,14 +43,14 @@ public class UserDaoJdbc implements UserDao {
 
 
     public void add(final User user) {
-        this.jdbcTemplate.update(this.sqlAdd,
+        this.jdbcTemplate.update(sqlMap.get("add"),
                 user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend(), user.getEmail()
         );
     }
 
     public User get(String id) {
         return this.jdbcTemplate.queryForObject(
-                this.sqlGet,
+                sqlMap.get("get"),
                 this.userMapper,
                 id
         );
@@ -82,13 +58,13 @@ public class UserDaoJdbc implements UserDao {
 
     public List<User> getAll() {
         return this.jdbcTemplate.query(
-                this.sqlGetAll,
+                sqlMap.get("getAll"),
                 this.userMapper
         );
     }
 
     public void deleteAll() {
-        jdbcTemplate.update(this.sqlDeleteAll);
+        jdbcTemplate.update(sqlMap.get("deleteAll"));
     }
 
     public int getCount() {
@@ -109,13 +85,13 @@ public class UserDaoJdbc implements UserDao {
 //                });
 
         // 하나의 정수 값을 위한 queryForObject 메소드를 사용
-        return this.jdbcTemplate.queryForObject(this.sqlGetCount, Integer.class);
+        return this.jdbcTemplate.queryForObject(sqlMap.get("getCount"), Integer.class);
     }
 
     @Override
     public void update(User user1) {
         this.jdbcTemplate.update(
-                this.sqlUpdate,
+                sqlMap.get("update"),
                 user1.getName(), user1.getPassword(), user1.getLevel().intValue(), user1.getLogin(), user1.getRecommend(), user1.getEmail(),
                 user1.getId()
         );

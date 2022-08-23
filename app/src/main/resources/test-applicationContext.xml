@@ -13,7 +13,6 @@
                 http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <import resource="classpath:userPrivateData.xml" />
-
     <tx:annotation-driven />
     <context:annotation-config/>
 
@@ -32,6 +31,8 @@
           parent="userService" />
 
     <bean id="sqlService" class="springbook.user.sqlservice.XmlSqlService">
+        <property name="sqlReader" ref="sqlService" />
+        <property name="sqlRegistry" ref="sqlService" />
         <property name="sqlmapFile" value="userSqlmap.xml" />
     </bean>
 

@@ -49,7 +49,6 @@ public class XmlSqlService implements SqlService, SqlRegistry, SqlReader {
     @Override
     public void read(SqlRegistry sqlRegistry) {
         String contextPath = Sqlmap.class.getPackage().getName();
-        System.out.println(contextPath);
 
         try {
             JAXBContext context = JAXBContext.newInstance(contextPath);

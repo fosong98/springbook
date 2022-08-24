@@ -1,5 +1,7 @@
 package springbook.user.sqlservice;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.test.context.jdbc.Sql;
 import springbook.user.dao.UserDao;
@@ -32,19 +34,17 @@ public class OxmSqlService implements SqlService {
     private class OxmSqlReader implements SqlReader {
         private static final String DEFAULT_SQLMAP_FILE = "/userSqlmap.xml";
         private Unmarshaller unmarshaller;
-        private String sqlmapFile = DEFAULT_SQLMAP_FILE;
+        private Resource sqlmap = new ClassPathResource(DEFAULT_SQLMAP_FILE, UserDao.class);
         @Override
         public void read(SqlRegistry sqlRegistry) {
             try {
-                Source source = new StreamSource(
-                        UserDao.class.getResourceAsStream(this.sqlmapFile)
-                );
+                Source source = new StreamSource(sqlmap.getInputStream());
                 Sqlmap sqlmap = (Sqlmap) this.unmarshaller.unmarshal(source);
                 for (SqlType sql : sqlmap.getSql()) {
                     sqlRegistry.registerSql(sql.getKey(), sql.getValue());
                 }
             } catch (IOException e) {
-                throw new IllegalArgumentException(this.sqlmapFile + " cannot open.", e);
+                throw new IllegalArgumentException(this.sqlmap.getFilename() + " cannot open.", e);
             }
         }
     }
@@ -58,7 +58,7 @@ public class OxmSqlService implements SqlService {
         this.oxmSqlReader.unmarshaller = unmarshaller;
     }
 
-    public void setSqlmapFile(String sqlmapFile) {
-        this.oxmSqlReader.sqlmapFile = sqlmapFile;
+    public void setSqlmap(Resource sqlmapFile) {
+        this.oxmSqlReader.sqlmap = sqlmapFile;
     }
 }

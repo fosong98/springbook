@@ -30,9 +30,7 @@
     <bean id="testUserService" class="springbook.user.test.UserServiceTest$TestUserServiceImpl"
           parent="userService" />
 
-    <bean id="sqlService" class="springbook.user.sqlservice.BaseSqlService">
-        <property name="sqlReader" ref="sqlReader" />
-        <property name="sqlRegistry" ref="sqlRegistry" />
+    <bean id="sqlService" class="springbook.user.sqlservice.DefaultSqlService">
     </bean>
 
     <bean id="sqlReader" class="springbook.user.sqlservice.JaxbXmlSqlReader">

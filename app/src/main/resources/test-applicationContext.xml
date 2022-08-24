@@ -30,10 +30,17 @@
     <bean id="testUserService" class="springbook.user.test.UserServiceTest$TestUserServiceImpl"
           parent="userService" />
 
-    <bean id="sqlService" class="springbook.user.sqlservice.XmlSqlService">
-        <property name="sqlReader" ref="sqlService" />
-        <property name="sqlRegistry" ref="sqlService" />
+    <bean id="sqlService" class="springbook.user.sqlservice.BaseSqlService">
+        <property name="sqlReader" ref="sqlReader" />
+        <property name="sqlRegistry" ref="sqlRegistry" />
+    </bean>
+
+    <bean id="sqlReader" class="springbook.user.sqlservice.JaxbXmlSqlReader">
         <property name="sqlmapFile" value="userSqlmap.xml" />
+    </bean>
+
+    <bean id="sqlRegistry" class="springbook.user.sqlservice.HashMapSqlRegistry">
+
     </bean>
 
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">

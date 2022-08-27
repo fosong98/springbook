@@ -17,7 +17,6 @@
 
     <import resource="classpath:userPrivateData.xml" />
     <tx:annotation-driven />
-    <context:annotation-config/>
 
     <jdbc:embedded-database id="embeddedDatabase" type="HSQL">
         <jdbc:script location="classpath:test/embeddeddb/schema.sql" />

@@ -15,11 +15,6 @@
                 http://www.springframework.org/schema/jdbc
                 http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
 
-    <tx:annotation-driven />
-
-    <jdbc:embedded-database id="embeddedDatabase" type="HSQL">
-        <jdbc:script location="classpath:test/embeddeddb/schema.sql" />
-    </jdbc:embedded-database>
 
     <bean id="sqlReader" class="springbook.user.sqlservice.JaxbXmlSqlReader">
         <property name="sqlmapFile" value="userSqlmap.xml" />

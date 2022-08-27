@@ -15,47 +15,16 @@
                 http://www.springframework.org/schema/jdbc
                 http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd">
 
-    <import resource="classpath:userPrivateData.xml" />
     <tx:annotation-driven />
 
     <jdbc:embedded-database id="embeddedDatabase" type="HSQL">
         <jdbc:script location="classpath:test/embeddeddb/schema.sql" />
     </jdbc:embedded-database>
 
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="testDataSource" />
-    </bean>
-
-    <bean id="mailSender" class="springbook.user.service.DummyMailSender" />
-
-    <bean id="userService" class="springbook.user.service.UserServiceImpl">
-        <property name="userDao" ref="userDao" />
-        <property name="mailSender" ref="mailSender" />
-    </bean>
-
-    <bean id="testUserService" class="springbook.user.test.UserServiceTest$TestUserServiceImpl"
-          parent="userService" />
-
-    <bean id="sqlService" class="springbook.user.sqlservice.OxmSqlService">
-        <property name="unmarshaller" ref="unmarshaller" />
-    </bean>
-
-    <bean name="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <property name="contextPath" value="springbook.user.sqlservice.jaxb" />
-    </bean>
-
     <bean id="sqlReader" class="springbook.user.sqlservice.JaxbXmlSqlReader">
         <property name="sqlmapFile" value="userSqlmap.xml" />
     </bean>
 
-    <bean id="sqlRegistry" class="springbook.issuetracker.updatable.EmbeddedDbSqlRegistry">
-        <property name="dataSource" ref="embeddedDatabase" />
-    </bean>
-
-    <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
-        <property name="dataSource" ref="testDataSource" />
-        <property name="sqlService" ref="sqlService" />
-    </bean>
 
     <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
         <tx:attributes>

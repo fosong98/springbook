@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="/test-applicationContext.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 @DirtiesContext
 public class UserDaoTest {
 

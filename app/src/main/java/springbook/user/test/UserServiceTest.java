@@ -17,6 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import springbook.user.dao.MockUserDao;
+import springbook.user.dao.TestApplicationContext;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
@@ -35,7 +36,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-applicationContext.xml")
+@ContextConfiguration(classes = TestApplicationContext.class)
 public class UserServiceTest {
     @Autowired
     ApplicationContext context;
@@ -46,14 +47,14 @@ public class UserServiceTest {
     @Autowired
     UserService testUserService;
     @Autowired
-    DataSource testDataSource;
+    DataSource dataSource;
     @Autowired
     PlatformTransactionManager transactionManager;
     @Autowired
     MailSender mailSender;
     List<User> users;
 
-    static class TestUserServiceImpl extends UserServiceImpl {
+    public static class TestUserServiceImpl extends UserServiceImpl {
         private String id = "emadnite1";
 
         @Override

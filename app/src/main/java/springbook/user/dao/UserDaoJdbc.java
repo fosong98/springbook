@@ -1,7 +1,11 @@
 package springbook.user.dao;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 import springbook.user.sqlservice.SqlService;
@@ -11,7 +15,9 @@ import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public class UserDaoJdbc implements UserDao {
+    @Autowired
     private SqlService sqlService;
 
     public void setSqlService(SqlService sqlService) {
@@ -37,7 +43,7 @@ public class UserDaoJdbc implements UserDao {
 
     public UserDaoJdbc() {}
 
-
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }

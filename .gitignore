@@ -7,3 +7,4 @@ build
 # Ignore Private Datas
 userPrivateData.xml
 UserDaoPrivateData.java
+database.properties

@@ -1,12 +1,10 @@
 package springbook.user.dao;
 
-import org.hsqldb.Database;
 import org.mariadb.jdbc.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -19,20 +17,18 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import springbook.issuetracker.updatable.EmbeddedDbSqlRegistry;
 import springbook.user.service.DummyMailSender;
 import springbook.user.service.UserService;
-import springbook.user.service.UserServiceImpl;
 import springbook.user.sqlservice.OxmSqlService;
 import springbook.user.sqlservice.SqlRegistry;
 import springbook.user.sqlservice.SqlService;
 import springbook.user.test.UserServiceTest;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "springbook.user")
-public class TestApplicationContext {
+public class AppContext {
     @Autowired
     UserDao userDao;
     @Bean
@@ -52,21 +48,6 @@ public class TestApplicationContext {
         DataSourceTransactionManager tm = new DataSourceTransactionManager();
         tm.setDataSource(dataSource());
         return tm;
-    }
-
-    @Bean
-    public MailSender mailSender() {
-        return new DummyMailSender();
-    }
-
-    @Bean
-    public UserService testUserService() {
-        UserServiceTest.TestUserServiceImpl testService = new UserServiceTest.TestUserServiceImpl();
-
-        testService.setUserDao(this.userDao);
-        testService.setMailSender(mailSender());
-
-        return testService;
     }
 
     @Bean

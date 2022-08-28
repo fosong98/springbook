@@ -25,12 +25,12 @@ public class DaoFactory {
         return dataSource;
     }
 
-    @Bean
-    public UserDao setterUserDao() {
-        UserDaoJdbc userDao = new UserDaoJdbc();
-        userDao.setDataSource(dataSource());
-        return userDao;
-    }
+//    @Bean
+//    public UserDao setterUserDao() {
+//        UserDaoJdbc userDao = new UserDaoJdbc();
+//        userDao.setDataSource(dataSource());
+//        return userDao;
+//    }
 
     @Bean
     public ConnectionMaker connectionMaker() {
